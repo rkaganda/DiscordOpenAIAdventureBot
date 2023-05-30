@@ -1,6 +1,8 @@
 import datetime
 import logging
 import discord
+import functools
+import asyncio
 
 from src import config
 from src.db import AdventureDB, User, UserMessage
@@ -91,7 +93,7 @@ def handle_commands(user: User, message: UserMessage, db: AdventureDB):
     return response_message
 
 
-def handle_adventure_message(user: User, message: UserMessage, db: AdventureDB):
+async def handle_adventure_message(user: User, message: UserMessage, db: AdventureDB):
     current_adventure_chain = db.get_current_adventure_chain(user_id=user.id)
     if current_adventure_chain is None:  # if there is no existing adventure chain
         response_message = "You are currently not on an adventure. Use !start to begin one or !help for more options."
@@ -162,7 +164,8 @@ async def on_message(message):
             if clean_message.find("!") == 0:
                 response_message = handle_commands(user=user, message=user_message, db=db)
             else:
-                response_message = handle_adventure_message(user=user, message=user_message, db=db)
+                response_message = await client.loop.run_in_executor(None, run_coroutine, handle_adventure_message(user, user_message, db))
+                # response_message = await handle_adventure_message(user=user, message=user_message, db=db)
 
             db.commit()
             db.close()
@@ -171,6 +174,10 @@ async def on_message(message):
     except Exception as e:
         logger.exception(e)
         raise e
+
+
+def run_coroutine(coro):
+    return asyncio.run(coro)
 
 
 client.run(config.settings['discord_bot_token'])

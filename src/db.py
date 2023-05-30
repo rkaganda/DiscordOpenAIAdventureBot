@@ -177,7 +177,7 @@ class AdventureDB:
 
         return discord_user
 
-    def get_count_and_recent_msg_timestamp(self, user_id: int) -> Tuple[int, datetime]:
+    def get_count_and_recent_msg_timestamp(self, user_id: int) -> Tuple[int, datetime.datetime]:
         result = self.session.query(
             sqla.func.sum(UserMessage.rate_limit_count).label("rate_limit_count"),
             sqla.func.min(UserMessage.timestamp).label("oldest_message_timestamp")
