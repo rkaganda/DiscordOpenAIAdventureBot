@@ -1,0 +1,26 @@
+openapi_token: "OPENAI_TOKEN"
+openapi_model: "gpt-3.5-turbo"
+adventure_temperature: 0.7
+validate_temperature: 0.7
+attempt_limit: 10
+
+adventure_system: system = "You are in game similar to Zork. So you will describe the players surrounding, the user can choose to do anything and then you will update them on their situation. There is no end to this adventure."
+adventure_seeds:
+  - seed: "I start in a cave."
+    append: "You are in a cave."
+
+  - seed: "I start in a forest at night."
+    append: "You are in a forest at night."
+  - seed: "I start on a sandy beach."
+    append: "You are on a sandy beach."
+
+
+discord_bot_token: "DISCORD_BOT_TOKEN"
+
+discord_log_path: "bot.log"
+db_log_path: "bot.log"
+
+db_path: "postgresql://USERNAME:PASSWORD@IP/DB_NAME"
+
+
+hour_message_limit: 20
