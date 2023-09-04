@@ -85,8 +85,8 @@ bot_commands = {
 
 
 def handle_commands(user: User, message: UserMessage, db: AdventureDB):
-    if message.content in bot_commands:
-        response_message = bot_commands[message.content]["func"](user=user, message=message, db=db)
+    if message.content.lower() in bot_commands:
+        response_message = bot_commands[message.content.lower()]["func"](user=user, message=message, db=db)
     else:
         response_message = f"{message.content} is not a valid command. Type !help for valid commands."
 
