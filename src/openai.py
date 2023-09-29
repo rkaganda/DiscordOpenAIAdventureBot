@@ -183,7 +183,7 @@ def generate_adventure_api_failure_response(message: str, message_chain: list, d
 def generate_adventure_ai_response(message: str, message_chain: list, db: AdventureDB):
     message_chain.append({
         "role": "user",
-        "content": f"{message}. Describe the scene, focusing only on this specific action. Limit your response to three sentences."
+        "content": f"{message}. Describe the scene, focusing only on this specific action. Limit your response to three sentences. Also ask the the player what their next action is."
     })
 
     json_data = {

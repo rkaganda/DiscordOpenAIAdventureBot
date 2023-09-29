@@ -76,10 +76,22 @@ def start_adventure(user: User, message: UserMessage, db: AdventureDB):
         return "Oops, I'm a bit busy right now. I should be ready in a minute or so..."
 
 
+def end_adventure(user: User, message: UserMessage, db: AdventureDB):
+    current_adventure_chain = db.get_current_adventure_chain(user_id=user.id)
+
+    if current_adventure_chain is None:  # if there is no existing adventure chain
+        response_message = "You are currently not on an adventure. Use !start to begin one or !help for more options."
+    else:
+        db.end_adventure_chain(current_adventure_chain)
+        response_message = "Your current adventure as ended. Use !start to begin one or !help for more options."
+
+    return response_message
+
+
 bot_commands = {
     "!repeat": {"func": repeat_last_message, "desc": "last adventure message."},
     "!start": {"func": start_adventure, "desc": "a new adventure."},
-    # "!end": {"func": repeat_last_message, "desc": "your current adventure."},
+    "!end": {"func": end_adventure, "desc": "your current adventure."},
     "!help": {"func": print_commands, "desc": "to view commands."},
 }
 

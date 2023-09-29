@@ -1,5 +1,5 @@
 import sqlalchemy as sqla
-from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Numeric
+from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Numeric, and_
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
@@ -211,12 +211,19 @@ class AdventureDB:
         current_chain = self.session.query(
             AdventureMessageChain
         ).filter(
-            AdventureMessageChain.user_id == user_id
+            and_(
+                AdventureMessageChain.user_id == user_id,
+                AdventureMessageChain.finished_at.is_(None)
+            )
         ).order_by(
             AdventureMessageChain.started_at.desc()
         ).limit(1).first()
 
         return current_chain
+
+    def end_adventure_chain(self, current_adventure_chain: AdventureMessageChain):
+        current_adventure_chain.finished_at = datetime.datetime.now()
+        self.session.flush()
 
     def get_message_chain(self, current_adventure_chain: AdventureMessageChain):
         message_chain = self.session.query(
