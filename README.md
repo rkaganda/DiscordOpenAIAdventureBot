@@ -14,7 +14,6 @@ AdventureBot is a Discord bot that is an interactive adventure game powered by O
 
 - [Installation](#installation)
 - [Configuration](#configuration)
-- [License](#license)
 
 ## Installation
 
