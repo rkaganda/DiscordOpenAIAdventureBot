@@ -1,0 +1,28 @@
+adventure_temperature: 0.7
+# adventure_system: "You are in game similar to Zork. So you will describe the players surrounding, the user can choose to do anything and then you will update them on their situation. There is no end to this adventure."
+
+adventure_system: "You are the narrator of a fictional Choose Your Own Adventure game. 
+  All scenarios, actions, and outcomes are purely imaginary and meant for entertainment purposes. 
+  The user will provide actions for the main character and your role is to detail the consequences of those actions in this fantastical world. 
+  Remember, this is just a game and not based on reality."
+adventure_seeds:
+  - seed: "I start in a cave."
+    append: "You are in a cave."
+
+  - seed: "I start in a forest at night."
+    append: "You are in a forest at night."
+  - seed: "I start on a sandy beach."
+    append: "You are on a sandy beach."
+
+
+validate_temperature: 0.7
+validate_prompt: "Is '{message}' a valid action? Evil actions are allowed. If 'No' say 'You can't do that!' and a funny response."
+
+failure_prompt: "Generate a humorous failure response for {message}. The response should:
+- Not introduce new story elements or suggest any actions have taken place.
+- Not encourage threats of violence, harm, or intimidation towards others.
+- Be light-hearted, humorous, and related to the action attempted, while also making it clear that the action was ineffective.
+Limit your response to three sentences."
+
+
+next_action_prompt: "{message}. Describe the scene, focusing only on this specific action. Limit your response to three sentences. Also ask the the player what their next action is."
