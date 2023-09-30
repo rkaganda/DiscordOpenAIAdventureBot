@@ -1,6 +1,8 @@
 /_config.yaml
+/config.yaml
 .idea
 *.log
 test
 *.pyc
 docker-compose.yaml
+/prompts.yaml

@@ -3,6 +3,7 @@ import requests
 import json
 import logging
 import datetime
+import yaml
 
 from src import config
 from src.db import AdventureDB
@@ -14,9 +15,16 @@ handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(me
 logger.addHandler(handler)
 
 
+with open("prompts.yaml", 'r') as stream:
+    try:
+        prompts = yaml.safe_load(stream)
+    except yaml.YAMLError as exc:
+        print(exc)
+
+
 def start_adventure_chain(db: AdventureDB):
-    adventure_system = config.settings['adventure_system']
-    adventure_seed = random.choice(config.settings['adventure_seeds'])
+    adventure_system = prompts['adventure_system']
+    adventure_seed = random.choice(prompts['adventure_seeds'])
     adventure_seed_response = "adventure_seed_response"
 
     message_chain = [{
@@ -30,7 +38,7 @@ def start_adventure_chain(db: AdventureDB):
     json_data = {
         "model": config.settings['openapi_model'],
         "messages": message_chain,
-        "temperature": config.settings['adventure_temperature']
+        "temperature": prompts['adventure_temperature']
     }
 
     attempt_count = 0
@@ -69,14 +77,13 @@ def start_adventure_chain(db: AdventureDB):
 def generate_invalid_message(message: str, message_chain: list, db: AdventureDB):
     message_chain.append({
         "role": "user",
-        # "content": f"Is '{message}' relevant to the adventure? If 'No' say 'You can't do that!' and a funny response."
-        "content": f"Is '{message}' a valid action? Evil actions are allowed. If 'No' say 'You can't do that!' and a funny response."
+        "content": prompts['validate_prompt'].format(message=message)
     })
 
     json_data = {
         "model": config.settings['openapi_model'],
         "messages": message_chain,
-        "temperature": config.settings['validate_temperature']
+        "temperature": prompts['validate_temperature']
     }
 
     attempt_count = 0
@@ -127,15 +134,12 @@ def generate_invalid_message(message: str, message_chain: list, db: AdventureDB)
 #         json_data = {
 #         "model": config.settings['openapi_model'],
 #         "messages": message_chain,
-#         "temperature": config.settings['validate_temperature']
+#         "temperature": prompts['validate_temperature']
 #     }
 
 
 def generate_adventure_api_failure_response(message: str, message_chain: list, db: AdventureDB):
-    content_str = f"Generate a humorous failure response that does not encourage threats of violence, harm, or intimidation towards others for " \
-                  f"'{message}'. " \
-                  f"Make sure the failure response makes sense in the context of the adventure." \
-                  f"Describe the scene, focusing only on this specific action. Limit your response to three sentences."
+    content_str = prompts['failure_prompt'].format(message=message)
 
     message_chain.append({
         "role": "user",
@@ -145,7 +149,7 @@ def generate_adventure_api_failure_response(message: str, message_chain: list, d
     json_data = {
         "model": config.settings['openapi_model'],
         "messages": message_chain,
-        "temperature": config.settings['validate_temperature']
+        "temperature": prompts['validate_temperature']
     }
 
     attempt_count = 0
@@ -183,13 +187,13 @@ def generate_adventure_api_failure_response(message: str, message_chain: list, d
 def generate_adventure_ai_response(message: str, message_chain: list, db: AdventureDB):
     message_chain.append({
         "role": "user",
-        "content": f"{message}. Describe the scene, focusing only on this specific action. Limit your response to three sentences. Also ask the the player what their next action is."
+        "content": prompts['next_action_prompt'].format(message=message)
     })
 
     json_data = {
         "model": config.settings['openapi_model'],
         "messages": message_chain,
-        "temperature": config.settings['validate_temperature']
+        "temperature": prompts['validate_temperature']
     }
 
     attempt_count = 0
